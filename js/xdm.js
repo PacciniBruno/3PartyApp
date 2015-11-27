@@ -9,11 +9,11 @@ module.exports = (function() {
         data: data
       });
 
-      var send = (function(target, message) {
+      var send = (function(target, msg) {
         return function() {
           var targetWindow = target.frame;
           if (targetWindow) {
-            targetWindow.postMessage(message, target.origin);
+            targetWindow.postMessage(msg, target.origin);
           } else {
             setTimeout(send, 500);
           }

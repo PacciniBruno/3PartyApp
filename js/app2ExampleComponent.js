@@ -1,6 +1,6 @@
 /* jshint strict: false */
 var mediator  = require('./mediator.js');
-var component = require('./component.js')();
+var Component = require('./Component.js');
 var xdm       = require('./xdm.js');
 var _         = require('./utils.js');
 
@@ -23,113 +23,110 @@ var elOptions = {
     tagName: 'div',
     attrs: {
       id: 'app2-container',
-      class: 'hidden-animation-state',
+      class: 'hidden-animation-state'
     },
     styles: {
-      display: 'none',
+      display: 'none'
     }
+  }
+};
+
+var App2Component = Component.extend({
+
+  // Create a unique identifier for the app1 App
+  // that will be used to identify the iframed myApp app
+  // to ensure a secured communication between host && client
+  // using the postMessage api.
+  uid: 'app2',
+
+  // Will be used as src for the iframe
+  target: iframeSrc,
+
+  // Origin part of the target url
+  origin: _.getOrigin(iframeSrc),
+
+  // Host part of the target url
+  host: _.getHost(iframeSrc),
+
+  elOptions: elOptions,
+
+  // Html id for the element
+  id: elOptions.container.attrs.id,
+
+  // HTML id for the iframe
+  frameId: elOptions.attrs.id,
+
+  // A map of events for this object
+  // Callbacks will be bound to the "view", with `this` set properly.
+  // Uses event delegation for efficiency and readability.
+  events: {
+    'app2.load': 'onLoad',
+    'app2.ready': 'onReady',
+    'app1.doSomething': 'onApp1DoSomething'
   },
-};
 
-module.exports = function() {
+  // A map of states for the component.
+  // Should not be modified or accessed directly (e.g: `this.state['ready']`)
+  // Use getter/setters instead (e.g: `this.getState('ready')`)
+  //
+  // Note: setState should not be called from another component. State changes
+  // have to be made internally.
+  state: {
+    load: false,
+    ready: false
+  },
 
-  var app2Component = _.extend(component(), {
+  initialize: function() {
+    this.el = this.render(elOptions);
 
-    // Create a unique identifier for the app1 App
-    // that will be used to identify the iframed myApp app
-    // to ensure a secured communication between host && client
-    // using the postMessage api.
-    uid: 'app2',
+    // Keep a reference to the iframe window object.
+    // Will be used later to send messages using postMessage.
+    // Child iframe window object can also be found in the "frame" array
+    this.frame = document.getElementById(this.frameId).contentWindow;
 
-    // Will be used as src for the iframe
-    target: iframeSrc,
+    // Post render DOM Events binding
+    this.registerDomEvents();
 
-    // Origin part of the target url
-    origin: _.getOrigin(iframeSrc),
+    return Component.prototype.initialize.call(this, mediator);
+  },
 
-    // Host part of the target url
-    host: _.getHost(iframeSrc),
+  // TODO: abstract some of this logic in Component.js
+  render: function(options) {
+    if (!options) { return null; }
 
-    elOptions: elOptions,
+    // Create dom elements
+    var $app2Container = this.createEl(options.container);
+    var $app2Iframe    = this.createEl(options);
 
-    // Html id for the element
-    id: elOptions.container.attrs.id,
+    // Insert dom elements in the host site dom
+    this.insertInContainer($app2Container, document.body);
+    this.insertInContainer($app2Iframe, $app2Container);
 
-    // HTML id for the iframe
-    frameId: elOptions.attrs.id,
+    return $app2Container;
+  },
 
-    // A map of events for this object
-    // Callbacks will be bound to the "view", with `this` set properly.
-    // Uses event delegation for efficiency and readability.
-    events: {
-      'app2.load': 'onLoad',
-      'app2.ready': 'onReady',
-      'app1.doSomething': 'onApp1DoSomething'
-    },
+  registerDomEvents: function() {
+    _.addEvent(this.el, 'click', _.bind(this.onApp2Click, this));
+  },
 
-    // A map of states for the component.
-    // Should not be modified or accessed directly (e.g: `this.state['ready']`)
-    // Use getter/setters instead (e.g: `this.getState('ready')`)
-    //
-    // Note: setState should not be called from another component. State changes
-    // have to be made internally.
-    state: {
-      load: false,
-      ready: false,
-    },
+  onLoad: function() {
+    this.setState('load', true);
+  },
 
-    initialize: function() {
-      this.el = this.render(elOptions);
+  onReady: function() {
+    this.setState('ready', true);
+  },
 
-      // Keep a reference to the iframe window object.
-      // Will be used later to send messages using postMessage.
-      // Child iframe window object can also be found in the "frame" array
-      this.frame = document.getElementById(this.frameId).contentWindow;
+  onApp2Click: function() {
+    mediator.trigger('app2.clicked');
+  },
 
-      component.initialize.call(this, mediator);
+  onApp1DoSomething: function() {
+    this.sendMessage('app2:app1DidSomthing');
+  }
 
-      return this;
-    },
+});
 
-    // TODO: abstract some of this logic in component.js
-    render: function(options) {
-      if (!options) return;
+_.extend(App2Component.prototype, xdm);
 
-      // Create dom elements
-      var $app2Container = this.createEl(options.container);
-      var $app2Iframe    = this.createEl(options);
-
-      // Insert dom elements in the host site dom
-      this.insertInContainer($app2Container, document.body);
-      this.insertInContainer($app2Iframe, $app2Container);
-
-      // Post render DOM Events binding
-      this.registerDomEvents();
-
-      return $app2Container;
-    },
-
-    registerDomEvents: function() {
-      _.addEvent(this.el, 'click', _.bind(this.onApp2Click, this));
-    },
-
-    onLoad: function() {
-      this.setState('load', true);
-    },
-
-    onReady: function() {
-      this.setState('ready', true);
-    },
-
-    onApp2Click: function() {
-      mediator.trigger('app2.clicked');
-    },
-
-    onApp1DoSomething: function() {
-      this.sendMessage('app2:app1DidSomthing');
-    }
-
-  }, xdm);
-
-  return app2Component;
-};
+module.exports = App2Component;

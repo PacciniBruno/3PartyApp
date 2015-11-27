@@ -1,7 +1,7 @@
 
 var _         = require('./utils.js');
 var Events    = require('./Events.js');
-var component = require('./component.js')();
+var Component = require('./Component.js');
 
 /**
  * The mediator object is a singleton that will be used as a global event bus by a frame app
@@ -15,7 +15,7 @@ module.exports = (function() {
 
   var _appsRegistry = {};
 
-  var mediator = _.extend(component, {
+  var mediator = _.extend({
 
     events: {
       // Process events comming from all apps.
@@ -25,7 +25,10 @@ module.exports = (function() {
     },
 
     initialize: function() {
-      return component.initialize.call(this, mediator);
+
+      // Create listeners for the events listed in the 'events' objects
+      this.delegateEvents(mediator, this.events, this);
+      return this;
     },
 
     /**
@@ -43,12 +46,10 @@ module.exports = (function() {
 
     unRegisterApp: function(uid) {
       delete _appsRegistry[uid];
-    },
+    }
 
   }, Events);
 
-  mediator.initialize();
-
-  return mediator;
+  return mediator.initialize();
 
 })();

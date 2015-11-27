@@ -1,10 +1,9 @@
 'use strict';
 
 var test      = require('tape');
-var sinon     = require('sinon');
-var mediator  = require('../../js/loader/mediator.js');
-var component = require('../../js/loader/component.js');
-var xdm       = require('../../js/loader/xdm.js');
+var mediator  = require('../../js/mediator.js');
+var Component = require('../../js/Component.js');
+var xdm       = require('../../js/xdm.js');
 var utils     = require('../utils.js');
 
 utils.contentLoaded(window, function() {
@@ -13,7 +12,7 @@ utils.contentLoaded(window, function() {
 
     // Another frame extends component and xdm,
     // because xdm will always be used by an instance of component
-    var anotherFrame = utils.extend(component(), {
+    var AnotherFrame = Component.extend({
       origin: '*',
 
       state: {
@@ -30,11 +29,14 @@ utils.contentLoaded(window, function() {
 
         this.el = this.insertInContainer(iframe, document.body);
         this.frame = iframe.contentWindow;
+        return this;
       }
-    }, xdm);
+    });
+
+    utils.extend(AnotherFrame.prototype, xdm);
 
     // Initialize the component
-    anotherFrame.initialize();
+    var anotherFrame = new AnotherFrame().initialize();
 
     var origPostMessage = anotherFrame.frame.postMessage;
     var postMessageSpy = sinon.spy(anotherFrame.frame, 'postMessage');
@@ -60,7 +62,7 @@ utils.contentLoaded(window, function() {
 
     // Another frame extends component and xdm,
     // because xdm will always be used by an instance of component
-    var anotherFrame = utils.extend(component(), {
+    var AnotherFrame = Component.extend({
       origin: '*',
 
       state: {
@@ -77,11 +79,14 @@ utils.contentLoaded(window, function() {
 
         this.el = this.insertInContainer(iframe, document.body);
         this.frame = iframe.contentWindow;
+        return this;
       }
-    }, xdm);
+    });
+
+    utils.extend(AnotherFrame.prototype, xdm);
 
     // Initialize the component
-    anotherFrame.initialize();
+    var anotherFrame = new AnotherFrame().initialize();
 
     var origPostMessage = anotherFrame.frame.postMessage;
     var postMessageSpy = sinon.spy(anotherFrame.frame, 'postMessage');

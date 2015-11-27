@@ -1,5 +1,5 @@
-var sdk      = require('../../js/loader/sdk.js');
-var mediator = require('../../js/loader/mediator.js');
+var sdk      = require('../../js/sdk.js');
+var mediator = require('../../js/mediator.js');
 var utils    = require('../utils.js');
 var test     = require('tape');
 
@@ -20,7 +20,7 @@ utils.contentLoaded(window, function() {
     var myApp = window.myApp = window.myApp || [];
 
     myApp.methods = [
-      'api',
+      'api'
     ];
 
     myApp.factory = function(method) {
@@ -53,7 +53,7 @@ utils.contentLoaded(window, function() {
     // Requiring `main.js` will instanciate
     // all modules, and calls to and `api` that were made
     // before the require will get dequeued only then.
-    var main = require('../../js/loader/main.js');
+    require('../../js/main.js');
 
     assert.ok(apiSpy.calledWith('my.api.method'), 'myApp.api was called');
 
@@ -62,12 +62,11 @@ utils.contentLoaded(window, function() {
 
     // Clean up
     sdk.calledBeforeLoad = false;
-    sdk.config.restore();
     sdk.api.restore();
     assert.end();
   });
 
-  test('Both the app2 and the app1 app now exist in the dom', function(assert) {
+  test('Both app2 and app1 apps now exist and their respective elements are in the dom', function(assert) {
 
     // refs to the modules instanciated in `main.js` that created elements in the dom.
     // Used to clean up after the tests

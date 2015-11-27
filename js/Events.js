@@ -103,8 +103,45 @@ var Events = {
       if (remove || _.isEmpty(obj._events)) delete this._listeningTo[id];
     }
     return this;
-  }
+  },
 
+  delegateEvents: function(other, events, ctx) {
+    if (!events || events === {}) { return this; }
+
+    this.undelegateEvents(other || this);
+    for (var key in events) {
+      var method = events[key];
+      if (!_.isFunction(method)) { method = this[method]; }
+      if (!method) { continue; }
+      this.listenTo(other || this, key, _.bind(method, ctx || this));
+    }
+    return this;
+  },
+
+  undelegateEvents: function(obj) {
+    this.stopListening(obj || this);
+  },
+
+  forwardStateChangeEvents: function(eventBus, states, context) {
+    if (!states || states === {}) { return this; }
+
+    _.each(states, function(value, state) {
+      var eventName = 'change:' + state;
+
+      // Listen to internal change events and forward to the mediator
+      context.on(eventName, function() {
+
+        // Turn arguments into a real array (not array-like object)
+        var args = [].slice.call(arguments);
+
+        // Set the first argument to be the event name
+        args.unshift(this.uid + '.' + eventName);
+
+        // Call trigger with the proper arguments using apply
+        eventBus.trigger.apply(eventBus, args);
+      });
+    });
+  },
 };
 
 // Regular expression used to split event strings.

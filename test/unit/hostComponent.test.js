@@ -1,10 +1,9 @@
 'use strict';
 
 var test          = require('tape');
-var sinon         = require('sinon');
-var mediator      = require('../../js/loader/mediator.js');
-var hostComponent = require('../../js/loader/hostComponent.js');
-var _             = require('../../js/loader/utils.js');
+var mediator      = require('../../js/mediator.js');
+var hostComponent = require('../../js/hostComponent.js');
+var _             = require('../../js/utils.js');
 var utils         = require('../utils.js');
 
 utils.contentLoaded(window, function() {
@@ -15,7 +14,7 @@ utils.contentLoaded(window, function() {
     // we get the reference to the parent `window` using `window.opener || window.parent`
     var channel = window;
 
-    function _postMessage(message) {
+    function postMessage(message) {
 
       // Message comming from registered app `exampleApp`
       message.sender = 'exampleApp';
@@ -27,7 +26,7 @@ utils.contentLoaded(window, function() {
     function sendHostMessage(name, params) {
       params = params || [];
 
-      _postMessage({
+      postMessage({
         scope: 'myApp',
         name: name,
         data: params
@@ -42,7 +41,7 @@ utils.contentLoaded(window, function() {
   // Create a dummy app, with a reference to the host's location host and origin
   var exampleApp = {
     host: _.getHost(window.location.href),
-    origin: _.getOrigin(window.location.href),
+    origin: _.getOrigin(window.location.href)
   };
 
   // Register it in the mediator for future retrival in the `onTargetMessage` method
@@ -50,20 +49,19 @@ utils.contentLoaded(window, function() {
 
   test('onTargetMessage', function(assert) {
 
-    var host = hostComponent();
+    // bind `onTargetMessage` to the host window on 'message'
+    var host = hostComponent.initialize();
+
     var sender = messageSender();
     var triggerSpy = sinon.spy(mediator, 'trigger');
     var loadExtStylesStub = sinon.stub(host, 'loadExtStyles');
-
-    // bind `onTargetMessage` the host window on 'message'
-    host.initialize();
 
     sender.sendHostMessage('coucou', {
       myparam: 'param'
     });
 
     // onTargetMessage will be called asynchronously (postMessage works asynchronously)
-    setTimeout(function() {
+    window.setTimeout(function() {
       assert.ok(triggerSpy.called, 'should trigger an event on mediator when receiving a valid message');
       assert.ok(triggerSpy.calledWith('coucou', {
         myparam: 'param'
@@ -78,11 +76,10 @@ utils.contentLoaded(window, function() {
 
   test('loadExtStyles gets called on initialize', function(assert) {
 
-    var host = hostComponent();
+    var host = hostComponent;
     var loadExtStylesStub = sinon.stub(host, 'loadExtStyles');
 
     host.initialize();
-
     assert.ok(loadExtStylesStub.called);
 
     // Clean up

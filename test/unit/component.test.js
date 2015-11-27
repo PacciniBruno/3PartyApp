@@ -1,9 +1,8 @@
 'use strict';
 
 var test      = require('tape');
-var sinon     = require('sinon');
-var component = require('../../js/loader/component.js');
-var Events    = require('../../js/loader/Events.js');
+var Component = require('../../js/Component.js');
+var Events    = require('../../js/Events.js');
 var utils     = require('../utils.js');
 
 utils.contentLoaded(window, function() {
@@ -28,12 +27,12 @@ utils.contentLoaded(window, function() {
 
   test('setState', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
     var triggerStub = sinon.stub(myComponent, 'trigger');
 
     // Initialization
     myComponent.state = {
-      state1: false,
+      state1: false
     };
 
     myComponent.setState('state1', true);
@@ -50,7 +49,7 @@ utils.contentLoaded(window, function() {
 
   test('getState', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
 
     // Initialization
     myComponent.state = {
@@ -72,7 +71,7 @@ utils.contentLoaded(window, function() {
 
   test('createEl', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
     var el = myComponent.createEl(frameOptions);
 
     assert.equal(el.tagName, 'ARTICLE');
@@ -86,7 +85,7 @@ utils.contentLoaded(window, function() {
 
   test('insertInContainer by id', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
     var el = myComponent.createEl(frameOptions);
     var containerEl = myComponent.createEl(containerOptions);
     document.body.appendChild(containerEl);
@@ -104,7 +103,7 @@ utils.contentLoaded(window, function() {
 
   test('insertInContainer using existing container element ref', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
     var el = myComponent.createEl(frameOptions);
     var containerEl = myComponent.createEl(containerOptions);
     document.body.appendChild(containerEl);
@@ -124,7 +123,7 @@ utils.contentLoaded(window, function() {
 
   test('hide', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
 
     // Assign myComponent.el to component:
     myComponent.el = myComponent.createEl(frameOptions);
@@ -142,7 +141,7 @@ utils.contentLoaded(window, function() {
 
   test('show', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
 
     // Assign myComponent.el to myComponent:
     myComponent.el = myComponent.createEl(frameOptions);
@@ -159,7 +158,7 @@ utils.contentLoaded(window, function() {
 
   test('setAttributes', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
 
     var el = myComponent.createEl(frameOptions);
 
@@ -177,7 +176,7 @@ utils.contentLoaded(window, function() {
 
   test('setInlineStyle', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
 
     var el = myComponent.createEl(frameOptions);
 
@@ -201,7 +200,7 @@ utils.contentLoaded(window, function() {
 
   test('removeInlineStyle', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
 
     var el = myComponent.createEl(frameOptions);
 
@@ -217,7 +216,7 @@ utils.contentLoaded(window, function() {
 
   test('delegateEvents on self', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
     var greetings = '';
 
     // Create an object that extends myComponent and has an events map:
@@ -233,7 +232,7 @@ utils.contentLoaded(window, function() {
 
       onGreet: function() {
         greetings = 'Hi!';
-      },
+      }
     });
 
     // Delegate events
@@ -250,7 +249,7 @@ utils.contentLoaded(window, function() {
 
   test('delegateEvents on another object', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
     var greetings = '';
 
     var eventBus = utils.extend({}, Events);
@@ -268,7 +267,7 @@ utils.contentLoaded(window, function() {
 
       onGreet: function() {
         greetings = 'Hi!';
-      },
+      }
     });
 
     // Delegate events
@@ -285,7 +284,7 @@ utils.contentLoaded(window, function() {
 
   test('undelegateEvents bound to self', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
     var greetings = '';
 
     // Create an object that extends myComponent and has an events map:
@@ -321,7 +320,7 @@ utils.contentLoaded(window, function() {
 
   test('undelegateEvents bound to another object', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
     var greetings = '';
 
     var eventBus = utils.extend({}, Events);
@@ -358,7 +357,7 @@ utils.contentLoaded(window, function() {
   });
 
   test('forwardStateChangeEvents should make state change events available on the mediator eventBus', function(assert) {
-    var myComponent = component();
+    var myComponent = new Component();
     myComponent.uid = 'testComponent';
 
     var eventBus = utils.extend({}, Events);
@@ -384,7 +383,7 @@ utils.contentLoaded(window, function() {
 
   test('remove', function(assert) {
 
-    var myComponent = component();
+    var myComponent = new Component();
 
     // Create myComponent own el
     myComponent.el = myComponent.createEl(frameOptions);

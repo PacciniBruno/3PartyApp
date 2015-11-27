@@ -15,8 +15,8 @@
 // an interface to communicate with the host via events.
 // You can have only one, N, none
 // (although that would kinda defeat the purpose of this "framework")
-var app1Component   = require('./app1ExampleComponent.js');
-var app2Component   = require('./app2ExampleComponent.js');
+var App1Component   = require('./app1ExampleComponent.js');
+var App2Component   = require('./app2ExampleComponent.js');
 
 var hostComponent   = require('./hostComponent.js');
 var mediator        = require('./mediator.js');
@@ -37,13 +37,11 @@ if (_.isUnsuported()) {
 var snippetVersion = myAppq && myAppq.SNIPPET_VERSION ?
   parseFloat(myAppq.SNIPPET_VERSION, 10) : 0;
 
-_.contentLoaded(window, initialize);
-
 function initialize() {
   // Initialize host and other apps (app1 and app2 as an example)
-  var host   = hostComponent().initialize();
-  var app1   = app1Component().initialize();
-  var app2   = app2Component().initialize();
+  var host = hostComponent.initialize();
+  var app1 = new App1Component().initialize();
+  var app2 = new App2Component().initialize();
 
   // Register the different component instances with a unique id
   mediator.registerApp(host, 'host');
@@ -55,13 +53,17 @@ function initialize() {
     var args = myAppq.shift();
     var method = args.shift();
 
-    if (myApp[method]) {
+    if (sdk[method]) {
       // call the method on sdk
-      sdk[method].apply(myApp, args);
+      sdk[method].apply(sdk, args);
       sdk.calledBeforeLoad = true;
     }
   }
 }
+
+// When the document object becomes accessible, initialize.
+// Needed when publishers inject your script in the <head>
+_.contentLoaded(window, initialize);
 
 // Finally, replace the global queue with the public interface in sdk.
 window.myApp = sdk;

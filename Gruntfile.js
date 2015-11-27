@@ -5,10 +5,10 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
 
-    snippetFooter: grunt.file.read('web/js/snippet/snippet.footer.js'),
+    snippetFooter: grunt.file.read('./js/snippet/snippet.footer.js'),
 
     clean: {
-      js: 'build/',
+      js: 'build/'
     },
 
     uglify: {
@@ -20,10 +20,10 @@ module.exports = function(grunt) {
           compress: false,
           banner: '(function (window, document, undefined) {' +
             '"use strict";',
-          footer: '})(this, document);',
+          footer: '})(this, document);'
         },
         src: './build/loader/loader.js',
-        dest: './build/loader/loader.js',
+        dest: './build/loader/loader.js'
       },
 
       loaderMin: {
@@ -32,10 +32,10 @@ module.exports = function(grunt) {
           compress: {},
           banner: '(function (window, document, undefined) {' +
             '"use strict";',
-          footer: '})(this, document);',
+          footer: '})(this, document);'
         },
         src: './build/loader/loader.js',
-        dest: './build/loader/loader.js',
+        dest: './build/loader/loader.js'
       },
 
       snippet: {
@@ -43,10 +43,10 @@ module.exports = function(grunt) {
           beautify: true,
           mangle: true,
           compress: false,
-          footer: '<%= snippetFooter %>',
+          footer: '<%= snippetFooter %>'
         },
         src: './js/snippet/snippet.js',
-        dest: './build/snippet/snippet.js',
+        dest: './build/snippet/snippet.js'
       },
 
       snippetMin: {
@@ -55,7 +55,7 @@ module.exports = function(grunt) {
             except: ['undefined']
           },
           compress: {},
-          footer: '<%= snippetFooter %>',
+          footer: '<%= snippetFooter %>'
         },
         src: './js/snippet/snippet.js',
         dest: './build/snippet/snippet.min.js'
@@ -65,13 +65,13 @@ module.exports = function(grunt) {
 
     karma: {
       test: {
-        configFile: 'karma.conf.js',
+        configFile: 'karma.conf.js'
       },
 
       build: {
         configFile: 'karma.conf.js',
         singleRun: true,
-        browsers: ['PhantomJS'],
+        browsers: ['PhantomJS']
       }
     },
 
@@ -80,7 +80,7 @@ module.exports = function(grunt) {
         entry: './js/main.js',
         output: {
           path: './build/',
-          filename: 'loader.js',
+          filename: 'loader.js'
         },
         resolve: {
           modulesDirectories: ['web_modules', 'node_modules']
@@ -91,17 +91,17 @@ module.exports = function(grunt) {
     watch: {
       default: {
         files: [
-          'js/**/*.js',
+          'js/**/*.js'
         ],
         tasks: [
           'webpack:loader',
-          'uglify:loader',
+          'uglify:loader'
         ],
         options: {
-          spawn: false,
-        },
-      },
-    },
+          spawn: false
+        }
+      }
+    }
 
   });
 
@@ -113,7 +113,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('clean', [
-    'clean:js',
+    'clean:js'
   ]);
 
   grunt.registerTask('devSnippet', [
@@ -122,7 +122,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('buildSnippet', [
-    'uglify:snippetMin',
+    'uglify:snippetMin'
   ]);
 
   grunt.registerTask('devApp', [
