@@ -49,7 +49,6 @@ var host = {
     try {
       message = JSON.parse(event.data);
     } catch (err) {
-      console.error('couldn\'t parse message coming from external iframe: ' + err);
       return;
     }
 

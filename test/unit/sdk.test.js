@@ -10,7 +10,7 @@ utils.contentLoaded(window, function() {
   test('sdk exposes two public method: `api`', function(assert) {
     assert.ok(sdk.hasOwnProperty('api'));
     assert.ok(sdk.hasOwnProperty('calledBeforeLoad'));
-    assert.equal(Object.keys(sdk).length, 3);
+    assert.equal(Object.keys(sdk).length, 2);
 
     assert.end();
   });

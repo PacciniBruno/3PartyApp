@@ -79,7 +79,7 @@ module.exports = function(grunt) {
       loader: {
         entry: './js/main.js',
         output: {
-          path: './build/',
+          path: './build/loader',
           filename: 'loader.js'
         },
         resolve: {
@@ -142,12 +142,11 @@ module.exports = function(grunt) {
 
   grunt.registerTask('dev', [
     'karma:build',
-    'devSnippet',
-    'webpack:app'
+    'webpack:app',
+    'watch'
   ]);
 
   grunt.registerTask('build', [
-    'clean',
     'karma:build',
     'buildSnippet',
     'buildApp'

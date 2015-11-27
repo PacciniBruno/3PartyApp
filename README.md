@@ -18,3 +18,7 @@ Test coverage isn't 100% yet. Notably utility methods and Event module aren't te
 ## Support
 
 Mostly tested on Chrome, Firefox and IE11. Should work ok on IE10, not tested though.
+
+## Build
+
+run `grunt build` to build both the snippet and the loader script.
